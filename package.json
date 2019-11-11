@@ -1,0 +1,28 @@
+{
+    "dependencies": {
+        "lodash": "^4.17.15"
+    },
+    "description": "Utilizing React native AsyncStorage Api in easier way when it comes for storing objects as well as arrays",
+    "license": "MIT",
+    "main": "index.js",
+    "name": "react-native-storage-simply",
+    "version": "1.0.0",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/aminerol/react-native-storage-simply.git"
+    },
+    "keywords": [
+      "react native",
+      "react native async storage",
+      "Async Storage wrapper",
+      "async storage arrays"
+    ],
+    "author": "Amine Bl <zazamine8@gmail.com>",
+    "bugs": {
+      "url": "https://github.com/aminerol/react-native-storage-simply/issues"
+    },
+    "homepage": "https://github.com/aminerol/react-native-storage-simply#readme"
+  }
