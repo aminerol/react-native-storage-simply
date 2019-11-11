@@ -25,7 +25,7 @@ class LocalStorage {
                 });
             }
         } catch (error) {
-            Promise.reject(error)
+            return Promise.reject(error)
         }
     }
 
@@ -38,8 +38,7 @@ class LocalStorage {
     async save(key, value) {
         try {
             if (!Array.isArray(key)) {
-                const storedItem = await AsyncStorage.setItem(key, JSON.stringify(value));
-                return storedItem
+                return await AsyncStorage.setItem(key, JSON.stringify(value));
             } else {
                 var pairs = key.map(function(pair) {
                     return [pair[0], JSON.stringify(pair[1])];
@@ -47,7 +46,7 @@ class LocalStorage {
                 return await AsyncStorage.multiSet(pairs);
             }
         } catch (error) {
-            Promise.reject(error)
+            return Promise.reject(error)
         }
     }
 
@@ -63,7 +62,7 @@ class LocalStorage {
             value = typeof value === 'string' ? value : _.merge({}, item, value);
             return await AsyncStorage.setItem(key, JSON.stringify(value));
         } catch (error) {
-            Promise.reject(error)
+            return Promise.reject(error)
         }
     }
 
@@ -80,7 +79,7 @@ class LocalStorage {
                 return await AsyncStorage.removeItem(key);
             }
         } catch (error) {
-            Promise.reject(error)
+            return Promise.reject(error)
         }
     }
 
@@ -92,7 +91,7 @@ class LocalStorage {
         try {
             return await AsyncStorage.getAllKeys();
         } catch (error) {
-            Promise.reject(error)
+            return Promise.reject(error)
         }
     }
 
@@ -102,15 +101,15 @@ class LocalStorage {
      * @param {Any} value The value to push onto the array
      * @param {Boolean} [isExist=false] check existence before pushing onto array, if its false it wont check for existence 
      * @param {Function} [predicate] The function invoked per element.
-     * @return {Promise}
+     * @return {Boolean} returns wether the item pushed to the array or not
      */
     async push(key, value, isExist = false, predicate) {
         try {
             const currentValue = await this.get(key)
-
             if (currentValue === null) {
                 // if there is no current value populate it with the new value
-                return await this.save(key, [value]);
+                await this.save(key, [value]);
+                return Promise.resolve(true)
             }
             if (Array.isArray(currentValue)) {
 
@@ -125,11 +124,16 @@ class LocalStorage {
                     }
                 }
                 if (!exist)
-                    return await this.save(key, [...currentValue, value]);
+                {
+                  await this.save(key, [...currentValue, value]);
+                  return Promise.resolve(true)
+                }else{
+                  return Promise.resolve(false)
+                }
             }
-            Promise.reject(new Error(`Existing value for key "${key}" must be of type null or Array, received ${typeof currentValue}.`));
+            return Promise.reject(new Error(`Existing value for key "${key}" must be of type null or Array, received ${typeof currentValue}.`));
         } catch (error) {
-            Promise.reject(error)
+            return Promise.reject(error)
         }
     }
 
@@ -146,7 +150,7 @@ class LocalStorage {
             const currentValue = await this.get(key)
 
             if (currentValue === null) {
-                Promise.reject(new Error(`There is no Array with key "${key}" stored, received ${typeof currentValue}.`))
+                return Promise.reject(new Error(`There is no Array with key "${key}" stored, received ${typeof currentValue}.`))
             }
             if (Array.isArray(currentValue)) {
                 if (path) {
@@ -159,9 +163,9 @@ class LocalStorage {
                 currentValue.push(newValue)
                 return await this.save(key, currentValue);
             }
-            Promise.reject(new Error(`Existing value for key "${key}" must be of type null or Array, received ${typeof currentValue}.`));
+            return Promise.reject(new Error(`Existing value for key "${key}" must be of type null or Array, received ${typeof currentValue}.`));
         } catch (error) {
-            Promise.reject(error)
+            return Promise.reject(error)
         }
     }
 
@@ -177,7 +181,7 @@ class LocalStorage {
             const currentValue = await this.get(key)
 
             if (currentValue === null) {
-                Promise.reject(new Error(`There is no Array with key "${key}" stored, received ${typeof currentValue}.`));
+                return Promise.reject(new Error(`There is no Array with key "${key}" stored, received ${typeof currentValue}.`));
             }
             if (Array.isArray(currentValue)) {
                 if (path) {
@@ -189,9 +193,9 @@ class LocalStorage {
                 }
                 return await this.save(key, currentValue);
             }
-            Promise.reject(Error(`Existing value for key "${key}" must be of type null or Array, received ${typeof currentValue}.`));
+            return Promise.reject(Error(`Existing value for key "${key}" must be of type null or Array, received ${typeof currentValue}.`));
         } catch (error) {
-            Promise.reject(error)
+            return Promise.reject(error)
         }
     }
 }

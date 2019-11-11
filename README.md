@@ -216,6 +216,7 @@ push(key, value, isExist = false, predicate)
 * The `value`  The value to push onto the array
 * The `isExist`  Optional argument by default its false, check existence before pushing onto array, if its false it wont check for existence
 * The `predicate`  Optional argument, The function invoked per element for checking the existence in case of nested objects
+* returns `Boolean` wether the item pushed to the array or not
 
 ### Example
 ```js
@@ -230,15 +231,15 @@ LocalStorage.push('todos', {id: 1, title: 'N = NP'}).then(() => {
 });
 
 // push item into array with checking but without specifying the function for checking
-LocalStorage.push('todos', 'N = NP', true).then(() => {
-    console.log('added item to array')
+LocalStorage.push('todos', 'N = NP', true).then(pushed => {
+    console.log(pushed ? 'added item to array' : 'item already exist')
 }).catch(error => {
     console.error(error);
 });
 
 // push item into array with checking by passing a function to do the check
-LocalStorage.push('todos', {id: 1, title: 'N = NP'}, true, item => item.id  === 1).then(() => {
-    console.log('added item to array')
+LocalStorage.push('todos', {id: 1, title: 'N = NP'}, true, item => item.id  === 1).then(pushed => {
+    console.log(pushed ? 'added item to array' : 'item already exist')
 }).catch(error => {
     console.error(error);
 });
