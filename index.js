@@ -2,7 +2,7 @@
  * @overview Utilizing React native AsyncStorage Api in easier way when it comes for storing objects as well as arrays
  * @license MIT
  */
-import { AsyncStorage } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 var _ = require('lodash');
 
 class LocalStorage {
