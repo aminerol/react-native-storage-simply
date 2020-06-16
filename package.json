@@ -1,6 +1,7 @@
 {
     "dependencies": {
-        "lodash": "^4.17.15"
+        "lodash": "^4.17.15",
+        "@react-native-community/async-storage": "^1.8.1"
     },
     "description": "Utilizing React native AsyncStorage Api in easier way when it comes for storing objects as well as arrays",
     "license": "MIT",
