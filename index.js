@@ -2,7 +2,7 @@
  * @overview Utilizing React native AsyncStorage Api in easier way when it comes for storing objects as well as arrays
  * @license MIT
  */
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 var _ = require('lodash');
 
 class LocalStorage {
@@ -17,7 +17,7 @@ class LocalStorage {
             if (!Array.isArray(key)) {
                 const value = await AsyncStorage.getItem(key);
                 const item = JSON.parse(value);
-                return item
+                return item;
             } else {
                 const values = await AsyncStorage.multiGet(key)
                 return values.map(value => {
@@ -38,12 +38,12 @@ class LocalStorage {
     async save(key, value) {
         try {
             if (!Array.isArray(key)) {
-                return await AsyncStorage.setItem(key, JSON.stringify(value));
+                await AsyncStorage.setItem(key, JSON.stringify(value));
             } else {
                 var pairs = key.map(function(pair) {
                     return [pair[0], JSON.stringify(pair[1])];
                 });
-                return await AsyncStorage.multiSet(pairs);
+                await AsyncStorage.multiSet(pairs);
             }
         } catch (error) {
             return Promise.reject(error)
@@ -60,7 +60,8 @@ class LocalStorage {
         try {
             const item = await this.get(key)
             value = typeof value === 'string' ? value : _.merge({}, item, value);
-            return await AsyncStorage.setItem(key, JSON.stringify(value));
+            await AsyncStorage.setItem(key, JSON.stringify(value));
+            return value;
         } catch (error) {
             return Promise.reject(error)
         }
@@ -109,10 +110,9 @@ class LocalStorage {
             if (currentValue === null) {
                 // if there is no current value populate it with the new value
                 await this.save(key, [value]);
-                return Promise.resolve(true)
+                return [value]
             }
             if (Array.isArray(currentValue)) {
-
                 let exist = false
                 if (isExist) {
                     if (predicate) {
@@ -126,9 +126,9 @@ class LocalStorage {
                 if (!exist)
                 {
                   await this.save(key, [...currentValue, value]);
-                  return Promise.resolve(true)
+                  return [...currentValue, value]
                 }else{
-                  return Promise.resolve(false)
+                  return currentValue
                 }
             }
             return Promise.reject(new Error(`Existing value for key "${key}" must be of type null or Array, received ${typeof currentValue}.`));
@@ -161,7 +161,8 @@ class LocalStorage {
                     })
                 }
                 currentValue.push(newValue)
-                return await this.save(key, currentValue);
+                await this.save(key, currentValue);
+                return currentValue
             }
             return Promise.reject(new Error(`Existing value for key "${key}" must be of type null or Array, received ${typeof currentValue}.`));
         } catch (error) {
@@ -191,7 +192,8 @@ class LocalStorage {
                         return v === value;
                     })
                 }
-                return await this.save(key, currentValue);
+                await this.save(key, currentValue);
+                return currentValue
             }
             return Promise.reject(Error(`Existing value for key "${key}" must be of type null or Array, received ${typeof currentValue}.`));
         } catch (error) {
